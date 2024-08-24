@@ -15,13 +15,6 @@ def load_data():
     df['Timestamp'] = pd.to_datetime(df['Timestamp'])
     df.set_index('Timestamp', inplace=True)
     return df
-@st.cache
-def get_database_connection():
-    # Create and return a database connection
-    conn = ...
-    return conn
-# Load data
-df = load_data()
 
 # Title of the dashboard
 st.title("Solar Energy Data Analysis Dashboard")
