@@ -11,11 +11,15 @@ st.set_page_config(page_title="Solar Energy Data Analysis", layout="wide")
 # Load the dataset
 @st.cache
 def load_data():
-    df = pd.read_csv('C:/Users/lenovo\Downloads/data/processed_data/processed_solar_data.csv')
+    df = pd.read_csv('C:/Users/lenovo/Downloads/data/processed_data/processed_solar_data.csv')
     df['Timestamp'] = pd.to_datetime(df['Timestamp'])
     df.set_index('Timestamp', inplace=True)
     return df
-
+@st.cache
+def get_database_connection():
+    # Create and return a database connection
+    conn = ...
+    return conn
 # Load data
 df = load_data()
 
@@ -80,26 +84,12 @@ ax.set_ylabel('Frequency')
 
 st.pyplot(fig)
 
-# Analysis of Soiling and Cleaning Impact
-st.header("Impact of Cleaning on Solar Panel Performance")
-
-cleaning_effectiveness = filtered_data.groupby(['Country', 'Cleaning'])[['GHI', 'ModA', 'ModB']].mean().reset_index()
-
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.barplot(x='Country', y='GHI', hue='Cleaning', data=cleaning_effectiveness, ax=ax)
-ax.set_title('Impact of Cleaning on GHI')
-ax.set_xlabel('Country')
-ax.set_ylabel('Average GHI (W/m²)')
-
-st.pyplot(fig)
-
-
 
 # Recommendations based on the analysis
 st.header("Recommendations for Solar Investments")
 
 st.write("""
-- **Benin and Togo:** High potential regions for solar installations due to high GHI and moderate weather conditions.
+- **Togo and Benin:** High potential regions for solar installations due to high GHI and moderate weather conditions.
 - **Sierra Leone:** Suitable for PV installations that can capitalize on diffuse radiation with enhanced maintenance protocols.
 - **Technology Selection:** Utilize high-temperature-resistant panels in Togo and Benin to minimize efficiency losses due to heat.
 - **Maintenance Strategy:** Develop a predictive maintenance model for cleaning schedules, especially in Sierra Leone, to optimize panel performance.
