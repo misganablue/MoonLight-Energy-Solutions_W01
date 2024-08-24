@@ -11,23 +11,37 @@ st.set_page_config(page_title="Solar Energy Data Analysis", layout="wide")
 # Load the dataset
 @st.cache
 def load_data():
-    df = pd.read_csv('C:/Users/lenovo/Downloads/data/processed_data/processed_solar_data.csv')
-    df['Timestamp'] = pd.to_datetime(df['Timestamp'])
-    df.set_index('Timestamp', inplace=True)
-    return df
+    data = pd.read_csv('D:/data/processed_data/processed_solar_data.csv')
+    data['Timestamp'] = pd.to_datetime(data['Timestamp'])
+    data.set_index('Timestamp', inplace=True)
+    return data
+
+# Load data
+data = load_data()
 
 # Title of the dashboard
 st.title("Solar Energy Data Analysis Dashboard")
+
+st.write("""
+         This report presents a strategic approach for Moon Light Energy Solutions to enhance 
+         operational efficiency and sustainability through targeted solar investments in West Africa. 
+         
+         By analyzing solar radiation measurement data from Benin, Sierra Leone, and Togo, 
+         we aim to identify high-potential regions for solar installation. 
+         
+         The analysis considers key environmental parameters such as solar irradiance, temperature, 
+         humidity, wind speed, and other factors affecting solar energy generation
+         """)
 
 # Sidebar for user input
 st.sidebar.header("User Input Parameters")
 
 # Select countries for analysis
-countries = df['Country'].unique()
+countries = data['Country'].unique()
 selected_countries = st.sidebar.multiselect('Select Countries', countries, default=countries)
 
 # Filter data based on user selection
-filtered_data = df[df['Country'].isin(selected_countries)]
+filtered_data = data[data['Country'].isin(selected_countries)]
 
 # Display basic statistics
 st.header("Basic Statistics")
@@ -77,6 +91,33 @@ ax.set_ylabel('Frequency')
 
 st.pyplot(fig)
 
+# Analysis of Soiling and Cleaning Impact
+st.header("Impact of Cleaning on Solar Panel Performance")
+
+cleaning_effectiveness = filtered_data.groupby(['Country', 'Cleaning'])[['GHI', 'ModA', 'ModB']].mean().reset_index()
+
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.barplot(x='Country', y='GHI', hue='Cleaning', data=cleaning_effectiveness, ax=ax)
+ax.set_title('Impact of Cleaning on GHI')
+ax.set_xlabel('Country')
+ax.set_ylabel('Average GHI (W/m²)')
+
+st.pyplot(fig)
+
+# Monthly analysis of solar irradiance for seasonality
+st.header("Seasonality Analysis: Monthly Average GHI by Country")
+
+filtered_data['Month'] = filtered_data.index.month
+monthly_ghi = filtered_data.groupby(['Country', 'Month'])['GHI'].mean().reset_index()
+
+fig, ax = plt.subplots(figsize=(14, 6))
+sns.lineplot(x='Month', y='GHI', hue='Country', data=monthly_ghi, marker='o', ax=ax)
+ax.set_title('Monthly Average GHI by Country')
+ax.set_xlabel('Month')
+ax.set_ylabel('Average GHI (W/m²)')
+ax.set_xticks(np.arange(1, 13, 1))
+
+st.pyplot(fig)
 
 # Recommendations based on the analysis
 st.header("Recommendations for Solar Investments")
