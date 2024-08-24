@@ -1,0 +1,2 @@
+processed_solar_data.csv filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
